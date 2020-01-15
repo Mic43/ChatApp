@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net.Sockets;
+using System.Text;
 using Common.Interfaces;
 using Common.Messages;
 
@@ -18,9 +19,11 @@ namespace Common
         }
         public void Send(IMessage message)
         {
-            using (var binaryWriter = new BinaryWriter(_tcpClient.GetStream()))
+            using (var binaryWriter = new BinaryWriter(_tcpClient.GetStream(),Encoding.UTF8,true))
             {
-                binaryWriter.Write(_messageSerializer.Serialize(message).Bytes);
+                var buffer = _messageSerializer.Serialize(message).Bytes;
+                binaryWriter.Write(buffer.Length);
+                binaryWriter.Write(buffer);
             }
         }
     }

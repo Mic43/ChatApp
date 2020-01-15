@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net.Sockets;
+using System.Text;
 using Common.Interfaces;
 using Common.Messages;
 
@@ -19,11 +20,15 @@ namespace Common
 
         public IMessage Receive()
         {
-            using (BinaryReader reader = new BinaryReader(_tcpClient.GetStream()))
+            using (BinaryReader reader = new BinaryReader(_tcpClient.GetStream(), Encoding.UTF8, true))
             {
                 try
                 {
-                    return _messageDeserializer.Deserialize(new BinaryData(reader.ReadFully()));
+                    int dataSize = reader.ReadInt32();
+                    var readBytes = reader.ReadBytes(dataSize);
+                    if (readBytes.Length != dataSize)
+                        throw new MessageReadException($"Wrong size of received data. Expected: {dataSize} Received: {readBytes}");
+                    return _messageDeserializer.Deserialize(new BinaryData(readBytes));
                 }
                 catch (IOException)
                 {
