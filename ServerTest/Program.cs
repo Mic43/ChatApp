@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using Common;
 using Common.Interfaces;
 using Common.Messages;
@@ -9,23 +11,31 @@ namespace ServerTest
 {
     class Program
     {
+        
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Server started!");
+            var chatServer = new ChatServer("127.0.0.1", 14002);
 
-            IPAddress ip = IPAddress.Parse("127.0.0.1");
-            var serverSocket = new TcpListener(ip, 14001);
-            serverSocket.Start();
-            
+            Task task = Task.Run(() => chatServer.Start());
+            Console.ReadKey();
 
-            using (TcpClient clientSocket = serverSocket.AcceptTcpClient())
-            {
-                Console.WriteLine($"client connected: {clientSocket.Client.RemoteEndPoint}");
-                Handle(clientSocket);
+            chatServer.Stop();
+            task.Wait();
 
-                clientSocket.Close();
-            }
-            serverSocket.Stop();
+//            IPAddress ip = IPAddress.Parse("127.0.0.1");
+//            var serverSocket = new TcpListener(ip, 14001);
+//            serverSocket.Start();
+//            
+//
+//            using (TcpClient clientSocket = serverSocket.AcceptTcpClient())
+//            {
+//                Console.WriteLine($"client connected: {clientSocket.Client.RemoteEndPoint}");
+//                Handle(clientSocket);
+//
+//                clientSocket.Close();
+//            }
+//            serverSocket.Stop();
         }
 
         private static void Handle(TcpClient clientSocket)

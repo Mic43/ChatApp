@@ -3,16 +3,14 @@
 namespace Common.Messages
 {
     [Serializable]
-    public class LoginResponse : IMessage
+    public class LoginResponse : Response
     {
-        public bool IsSuccess { get; set; }
         public string NewAuthorizationToken { get; set; }
 
         public LoginResponse(
             bool isSuccess, 
-            string newAuthorizationToken) 
+            string newAuthorizationToken) : base(isSuccess)
         {
-            IsSuccess = isSuccess;
             NewAuthorizationToken = newAuthorizationToken ?? throw new ArgumentNullException(nameof(newAuthorizationToken));
         }
 

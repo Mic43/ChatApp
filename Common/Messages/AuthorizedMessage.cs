@@ -1,5 +1,8 @@
-﻿namespace Common.Messages
+﻿using System;
+
+namespace Common.Messages
 {
+    [Serializable]
     public abstract class AuthorizedMessage:IMessage
     {
         public string SenderAuthorizationToken { get; set; }

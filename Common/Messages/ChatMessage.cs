@@ -5,7 +5,8 @@ namespace Common.Messages
     [Serializable]
     public class ChatMessage : AuthorizedMessage
     {
-        public ChatMessage(string senderAuthorizationToken, string text, string senderLogin, string receiverLogin) : base(senderAuthorizationToken)
+        public ChatMessage(string senderAuthorizationToken, string text, 
+            string senderLogin, string receiverLogin) : base(senderAuthorizationToken)
         {
             Text = text;
             SenderLogin = senderLogin;
