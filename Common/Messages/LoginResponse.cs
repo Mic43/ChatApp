@@ -11,7 +11,7 @@ namespace Common.Messages
             bool isSuccess, 
             string newAuthorizationToken) : base(isSuccess)
         {
-            NewAuthorizationToken = newAuthorizationToken ?? throw new ArgumentNullException(nameof(newAuthorizationToken));
+            NewAuthorizationToken = newAuthorizationToken;
         }
 
         public override string ToString()

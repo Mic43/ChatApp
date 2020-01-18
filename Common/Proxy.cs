@@ -45,6 +45,30 @@ namespace Common
             }
         }
 
+        public void Call<TRequest>(TRequest request)
+            where TRequest : IMessage 
+        {
+            if (!IsConnected)
+                throw new InvalidOperationException("Proxy is not connected, call Connect function first");
+
+            _messageSender.Send(request);
+        }
+        public (bool IsSuccess, Exception error) TryCall<TRequest>(TRequest request)
+            where TRequest : class, IMessage
+        {
+            try
+            {
+                Call(request);
+                return (true, null);
+
+            }
+            catch (IOException e)
+            {
+                return (
+false, e);
+            }
+        }
+
         public TResponse Call<TRequest, TResponse>(TRequest request)
             where TRequest : IMessage where TResponse : IMessage
         {

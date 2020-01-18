@@ -16,8 +16,9 @@ namespace ChatClientGui
 {
     public partial class MainFrm : Form
     {
-        private  Proxy _serverProxy;
+        private Proxy _serverProxy;
         private string _responseNewAuthorizationToken;
+        private string _loggedUserLogin;
 
         public MainFrm()
         {
@@ -29,48 +30,45 @@ namespace ChatClientGui
         {
             var result = _serverProxy.TryConnect();
             if (!result.IsSuccess)
-                MessageBox.Show($"Error: {result.error}");
-
-        }
-        private void buttonConnect_Click(object sender, EventArgs e)
-        {
-            var result = _serverProxy.TryCall<LoginRequest, LoginResponse>(new LoginRequest("admin", "haslo"));
-            if (!result.IsSuccess)
-                MessageBox.Show($"Error: {result.error}");
-            else
             {
-                _responseNewAuthorizationToken = result.Response.NewAuthorizationToken;
-                richTextBox1.AppendText(result.Response.ToString());
+                MessageBox.Show($"Error: {result.error}");
+                Application.Exit();
             }
-
-//            using (TcpClient client = new TcpClient("127.0.0.1", 14001))
-//            {
-//                var binaryMessageProcessor = new BinaryMessageProcessor();
-//
-//                IMessageSender messageSender = new TcpMessageSender(client, binaryMessageProcessor);
-//                IMessageReceiver messageReceiver = new TcpMessageReceiver(client, binaryMessageProcessor);
-//
-//                var receiver = new MessageReceiver<LoginResponse>(messageReceiver);
-//
-//                messageSender.Send(new LoginRequest("admin", "haslo"));
-//                LoginResponse response = receiver.Receive();
-//                richTextBox1.AppendText(response.ToString());
-//
-//                client.Close();
-//            }
-
+        }
+        private void TryLogin()
+        {
+            _loggedUserLogin = Microsoft.VisualBasic.Interaction.InputBox("UserName", "User name");
+            var password = Microsoft.VisualBasic.Interaction.InputBox("Password", "Password");
+          
+            var result = _serverProxy.TryCall<LoginRequest, LoginResponse>(new LoginRequest(_loggedUserLogin, password));
+            if (!result.IsSuccess)
+            {
+                MessageBox.Show($"Error: {result.error}");
+                Application.Exit();
+            }
+            else 
+            {
+                if (result.Response.IsSuccess)
+                    _responseNewAuthorizationToken = result.Response.NewAuthorizationToken;
+                else
+                {
+                    MessageBox.Show("Login unsuccesful");
+                    Application.Exit();
+                }
+            }
         }
 
         private void MainFrm_Load(object sender, EventArgs e)
         {
             Connect();
+            TryLogin();
         }
 
         private void buttonSend_Click(object sender, EventArgs e)
         {
-            _serverProxy.Call<ChatMessage, Response>(
+            _serverProxy.Call(
                 new ChatMessage(_responseNewAuthorizationToken,
-                    richTextBoxInput.Text, "", ""));
+                    richTextBoxInput.Text, _loggedUserLogin, textBoxReceiver.Text));
         }
     }
 }
