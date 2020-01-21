@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace ServerTest
 {
@@ -16,7 +18,8 @@ namespace ServerTest
 
         private readonly string _host;
         private readonly int _port;
-        private readonly ConcurrentBag<ConnectedEndpoint> _clients = new ConcurrentBag<ConnectedEndpoint>();
+        private readonly ConcurrentDictionary<Guid,ConnectedEndpoint> _clients 
+            = new ConcurrentDictionary<Guid, ConnectedEndpoint>();
         private readonly TcpListener _serverSocket;
         private bool _stopServer = false;
         private readonly BinaryMessageProcessor _binaryMessageProcessor = new BinaryMessageProcessor();
@@ -52,23 +55,32 @@ namespace ServerTest
         {
             List<Task> tasks = new List<Task>();
             _serverSocket.Start();
-            IChatMessageSender sender = new ChatMessageSender(_clients);
+            IChatMessageSender messageSender = new ChatMessageSender(_clients.AsEnumerable().Select(x=>x.Value));
             while (!IsStopped)
             {
-                Thread.Sleep(2000);
+                Thread.Sleep(1000);
                 if (_serverSocket.Pending())
                 {
                     _logger.WriteLine("Client connected");
-
                     TcpClient clientSocket = _serverSocket.AcceptTcpClient();
-                    var connectedEndpoint = new ConnectedEndpoint(clientSocket, _binaryMessageProcessor,
-                        _binaryMessageProcessor, _logger, sender);
-                    _clients.Add(connectedEndpoint);
+
+                    var connectedEndpoint = 
+                        new ConnectedEndpoint(Guid.NewGuid(),clientSocket, _binaryMessageProcessor,
+                            _binaryMessageProcessor, _logger, messageSender);
+
+                    void OnDisconnected(object sender, EventArgs args)
+                    {
+                        _clients.Remove(((ConnectedEndpoint) sender).Id,out connectedEndpoint);
+                    }
+                    connectedEndpoint.OnDisconnected += OnDisconnected;
+
+                    _clients.TryAdd(connectedEndpoint.Id,connectedEndpoint);
+
                     tasks.Add(Task.Run(() => connectedEndpoint.Handle()));
                 }
             }
 
-            foreach (var connectedEndpoint in _clients)
+            foreach (var connectedEndpoint in _clients.Values)
             {
                 connectedEndpoint.Close();
             }

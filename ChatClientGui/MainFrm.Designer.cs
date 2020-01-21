@@ -41,17 +41,18 @@
             this.richTextBoxOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBoxOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.richTextBoxOutput.Location = new System.Drawing.Point(13, 12);
             this.richTextBoxOutput.Name = "richTextBoxOutput";
             this.richTextBoxOutput.ReadOnly = true;
-            this.richTextBoxOutput.Size = new System.Drawing.Size(391, 199);
+            this.richTextBoxOutput.Size = new System.Drawing.Size(443, 232);
             this.richTextBoxOutput.TabIndex = 1;
             this.richTextBoxOutput.Text = "";
             // 
             // buttonSend
             // 
             this.buttonSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSend.Location = new System.Drawing.Point(187, 319);
+            this.buttonSend.Location = new System.Drawing.Point(239, 352);
             this.buttonSend.Name = "buttonSend";
             this.buttonSend.Size = new System.Drawing.Size(75, 23);
             this.buttonSend.TabIndex = 2;
@@ -63,23 +64,26 @@
             // 
             this.richTextBoxInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.richTextBoxInput.Location = new System.Drawing.Point(14, 217);
+            this.richTextBoxInput.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.richTextBoxInput.Location = new System.Drawing.Point(14, 250);
             this.richTextBoxInput.Name = "richTextBoxInput";
-            this.richTextBoxInput.Size = new System.Drawing.Size(248, 96);
+            this.richTextBoxInput.Size = new System.Drawing.Size(300, 96);
             this.richTextBoxInput.TabIndex = 3;
             this.richTextBoxInput.Text = "";
             // 
             // textBoxReceiver
             // 
-            this.textBoxReceiver.Location = new System.Drawing.Point(269, 292);
+            this.textBoxReceiver.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxReceiver.Location = new System.Drawing.Point(321, 325);
             this.textBoxReceiver.Name = "textBoxReceiver";
             this.textBoxReceiver.Size = new System.Drawing.Size(135, 20);
             this.textBoxReceiver.TabIndex = 4;
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(269, 273);
+            this.label1.Location = new System.Drawing.Point(321, 306);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 13);
             this.label1.TabIndex = 5;
@@ -89,7 +93,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(417, 346);
+            this.ClientSize = new System.Drawing.Size(469, 379);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBoxReceiver);
             this.Controls.Add(this.richTextBoxInput);

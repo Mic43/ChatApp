@@ -15,7 +15,7 @@ namespace Common
         private BinaryMessageProcessor _binaryMessageProcessor;
         private IMessageSender _messageSender;
         private IMessageReceiver _messageReceiver;
-        private bool IsConnected => _client != null && _client.Connected;
+        public bool IsConnected => _client != null && _client.Connected;
 
         public Proxy(string hostIp,int hostPort)
         {
@@ -45,6 +45,8 @@ namespace Common
             }
         }
 
+
+
         public void Call<TRequest>(TRequest request)
             where TRequest : IMessage 
         {
@@ -53,6 +55,7 @@ namespace Common
 
             _messageSender.Send(request);
         }
+
         public (bool IsSuccess, Exception error) TryCall<TRequest>(TRequest request)
             where TRequest : class, IMessage
         {
@@ -92,6 +95,15 @@ false, e);
             {
                 return (null, false, e);
             }
+        }
+
+        public TMessage Receive<TMessage>() where TMessage : IMessage
+        {
+            if (!IsConnected)
+                throw new InvalidOperationException("Proxy is not connected, call Connect function first");
+
+            var receiver = new MessageReceiver<TMessage>(_messageReceiver);
+            return receiver.Receive();
         }
 
         public void Dispose()

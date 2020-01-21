@@ -11,6 +11,7 @@ namespace ServerTest
 {
     class ConnectedEndpoint
     {
+        public Guid Id { get; }
         private readonly TcpClient _clientSocket;
         private readonly IMessageDeserializer _deserializer;
         private readonly IMessageSerializer _messageSerializer;
@@ -18,14 +19,17 @@ namespace ServerTest
         private readonly IChatMessageSender _chatMessageSender;
         private readonly TcpMessageSender _sender;
         
-
         public bool IsAuthorized => AuthorizationToken != null;
         public string AuthorizationToken { get; private set; } = null;
         public string Login { get; private set; }
 
-        public ConnectedEndpoint(TcpClient clientSocket, IMessageDeserializer deserializer,
-            IMessageSerializer messageSerializer,ILogger logger,IChatMessageSender chatMessageSender)
+        public event EventHandler<EventArgs> OnDisconnected;
+
+
+        public ConnectedEndpoint(Guid id, TcpClient clientSocket, IMessageDeserializer deserializer,
+            IMessageSerializer messageSerializer, ILogger logger, IChatMessageSender chatMessageSender)
         {
+            Id = id;
             _clientSocket = clientSocket ?? throw new ArgumentNullException(nameof(clientSocket));
             _deserializer = deserializer ?? throw new ArgumentNullException(nameof(deserializer));
             _messageSerializer = messageSerializer ?? throw new ArgumentNullException(nameof(messageSerializer));
@@ -46,7 +50,7 @@ namespace ServerTest
                  user = dbContext.Users.Find(loginRequest.Login);
             }
 
-            if (user == null)
+            if (user == null || user.Password != loginRequest.Password)
             {
                 _sender.Send(new LoginResponse(false, null));
                 return;
@@ -83,6 +87,7 @@ namespace ServerTest
                 catch (EndOfStreamException e)
                 {
                     _logger.WriteLine("Client disconnected");
+                    OnDisconnected?.Invoke(this,EventArgs.Empty);
                     Close();
                 }
                 catch (IOException e)
